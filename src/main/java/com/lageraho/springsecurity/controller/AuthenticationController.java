@@ -36,7 +36,6 @@ public class AuthenticationController {
     @PostMapping(value = "")
     public ResponseEntity<?> createAuthenticationToken (@RequestBody @Valid AuthenticationRequest authenticationRequest,
                                                         BindingResult result) {
-
         if (result.hasErrors()) {
             validatorFactory = Validation.buildDefaultValidatorFactory();
             validator = (Validator) validatorFactory.getValidator();
