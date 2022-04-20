@@ -1,0 +1,7 @@
+create database umanagement;
+use umanagement;
+
+CREATE USER IF NOT EXISTS 'umanagementadmin'@'localhost'
+    IDENTIFIED BY 'oracle13@SQL';
+
+GRANT ALL PRIVILEGES ON umanagement.* TO 'umanagementadmin'@'localhost';
