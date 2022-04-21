@@ -4,10 +4,11 @@ package com.lageraho.springsecurity.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lageraho.springsecurity.util.UMConstants;
 import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -17,21 +18,21 @@ import java.util.stream.Collectors;
 
 
 @Data
-@Entity
-//@Document
+//@Entity
+@Document
 public class User implements UserDetails {
 
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private String id;
 
 
     @NotNull(message = "Username can't be empty")
     @NotBlank(message = "Username can't be empty")
     @Size(min = 6, max = 32, message = "Username should be minimum of 6 characters")
     @Pattern(regexp = UMConstants.ALPHANUMERIC_PATTERN, message = "Username should be alphanumeric")
-    @Column(unique = true)
+//    @Column(unique = true)
     private String username;
 
     @NotNull(message = "Forgot to enter password")
@@ -49,7 +50,7 @@ public class User implements UserDetails {
 
     private boolean isLocked;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    //    @ManyToOne(fetch = FetchType.EAGER)
     private Role role;
 
 

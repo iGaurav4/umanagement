@@ -5,15 +5,17 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 
-import javax.persistence.*;
 
 @Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
+//@Entity
+@Document
 public class Permission {
 
     public enum PermissionType {
@@ -23,11 +25,13 @@ public class Permission {
     }
 
     @Id
-    @GeneratedValue(strategy =  GenerationType.IDENTITY)
-    private Long id;
+//    @GeneratedValue(strategy =  GenerationType.IDENTITY)
+    private String id;
     private String description;
-    @Enumerated(EnumType.STRING)
+
+//    @Enumerated(EnumType.STRING)
     private PermissionType type;
+
     @JsonIgnore
     private GrantedAuthority grantedAuthority;
 
