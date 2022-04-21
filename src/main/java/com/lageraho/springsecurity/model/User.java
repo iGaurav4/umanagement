@@ -3,9 +3,7 @@ package com.lageraho.springsecurity.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lageraho.springsecurity.util.UMConstants;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -15,16 +13,18 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 
 @Data
 @Entity
+//@Document
 public class User implements UserDetails {
 
 
-   @Id
-   @GeneratedValue(strategy = GenerationType.IDENTITY)
-   private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
 
     @NotNull(message = "Username can't be empty")
@@ -49,25 +49,16 @@ public class User implements UserDetails {
 
     private boolean isLocked;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Role role;
 
 
     @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return role.getPermissions().stream().map(Permission::getGrantedAuthority).collect(Collectors.toList());
     }
 
-    @JsonIgnore
-    @Override
-    public String getPassword() {
-        return null;
-    }
-
-    @JsonIgnore
-    @Override
-    public String getUsername() {
-        return null;
-    }
 
     @JsonIgnore
     @Override
@@ -83,7 +74,7 @@ public class User implements UserDetails {
     @JsonIgnore
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @JsonIgnore

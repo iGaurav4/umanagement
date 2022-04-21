@@ -3,6 +3,7 @@ package com.lageraho.springsecurity.controller;
 import com.lageraho.springsecurity.model.AuthenticationRequest;
 import com.lageraho.springsecurity.model.AuthenticationResponse;
 import com.lageraho.springsecurity.service.UserDetailsServiceImpl;
+import com.lageraho.springsecurity.util.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,16 +11,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.*;
-import java.util.HashMap;
 import java.util.Set;
 
 
-@RequestMapping("/api/umanagement/authenticate")
+@RequestMapping("/api/authenticate")
 @RestController
 @Slf4j
 @CrossOrigin
@@ -29,6 +29,8 @@ public class AuthenticationController {
     private AuthenticationManager authenticationManager;
     @Autowired
     private UserDetailsServiceImpl userDetailService;
+    @Autowired
+    private JwtUtil jwtUtil;
 
     private static ValidatorFactory validatorFactory;
     private static Validator validator;
@@ -36,6 +38,8 @@ public class AuthenticationController {
     @PostMapping(value = "")
     public ResponseEntity<?> createAuthenticationToken (@RequestBody @Valid AuthenticationRequest authenticationRequest,
                                                         BindingResult result) {
+        log.info("Username :{}, password:{}", authenticationRequest.getUsername(),
+                authenticationRequest.getPassword());
         if (result.hasErrors()) {
             validatorFactory = Validation.buildDefaultValidatorFactory();
             validator = (Validator) validatorFactory.getValidator();
@@ -51,8 +55,8 @@ public class AuthenticationController {
 //                timeoutManager.registerIncorrectTry(authenticationRequest.getUsername());
                 throw new BadCredentialsException("Incorrect username or password", e);
             }
-//            final UserDetails userDetails = userDetailService.loadUserByUsername(authenticationRequest.getUsername());
-            final String jwt = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
+            final UserDetails userDetails = userDetailService.loadUserByUsername(authenticationRequest.getUsername());
+            final String jwt = jwtUtil.generateToken(userDetails);
             final String username = authenticationRequest.getUsername();
             log.debug("Generated new Token");
 

@@ -1,7 +1,9 @@
 package com.lageraho.springsecurity.init;
 
 
+import com.lageraho.springsecurity.model.Role;
 import com.lageraho.springsecurity.model.User;
+import com.lageraho.springsecurity.repository.RoleRepository;
 import com.lageraho.springsecurity.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +16,7 @@ import org.springframework.stereotype.Component;
 
 
 @Slf4j
-@Order(1)
+@Order(3)
 @Component
 public class UserInitializer implements ApplicationRunner {
 
@@ -31,10 +33,14 @@ public class UserInitializer implements ApplicationRunner {
     @Value("${umanagement.auth.default-user-email}")
     String defaultUserEmail;
 
+    @Value("${umanagement.auth.default-role-name}")
+    String defaultSuperRoleName;
 
 
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    RoleRepository roleRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -48,7 +54,8 @@ public class UserInitializer implements ApplicationRunner {
             superUser.setName(defaultName);
             superUser.setPassword(passwordEncoder.encode(defaultUserPassword));
             superUser.setEmail(defaultUserEmail);
-
+            Role superUserRole = roleRepository.findByName(defaultSuperRoleName);
+            superUser.setRole(superUserRole);
             userRepository.save(superUser);
 
             log.debug(" SuperUser initialised user:{}, password: {}", superUser.getUsername(), superUser.getPassword());
